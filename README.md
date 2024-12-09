@@ -82,4 +82,7 @@ MKHSICLasso.save_param(path)
 hsic_lasso.get_index() 
 ```
 
+## Customise kernel functions
+
+see 'kernel_tool` file, add the kernel you want to apply.
 
