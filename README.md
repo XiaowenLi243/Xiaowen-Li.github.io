@@ -79,7 +79,7 @@ Users can adjust the following parameters:
 
 ```py
 MKHSICLasso.save_param(path)
-hsic_lasso.get_index() 
+MKHSICLasso.get_index() 
 ```
 
 ## Customise kernel functions
