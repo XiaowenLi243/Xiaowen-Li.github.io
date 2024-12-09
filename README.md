@@ -1,4 +1,4 @@
-# MK-HSIC-LASSO
+# MK-HSIC-Lasso
 
 We developed the Multi-Kernel Hilbert-Schmidt Independence Criterion Lasso (MK-HSIC-Lasso)
 for feature selection. Our approach integrates multiple kernel learning into the HSIC-Lasso framework,
@@ -50,90 +50,36 @@ $ pip install MKHSICLasso
 
 ## Getting Started
 
-
-
-# run HSIC-lasso
-hsic_lasso = MKHSICLasso()
-hsic_lasso.input(x_train_norm,y_train_norm)
-
-# regression continuous y 
-hsic_lasso.regression(desire_number,B=B, M=M, max_neighbors=max_neighbors)
-# save selected results.
-hsic_lasso.save_param('/nesi/project/uoa03056/MultiOmics/ADNI/Gene_expression/MKparams_GM/gene_ex_GM_%d.csv'%ind)
-#active_ind = hsic_lasso.get_index() 
-
-
-## Save results to a csv file
-If you want to save the feature selection results in csv file, please call the following function:
-
-```
->>> MKhsic_lasso.save_param()
-```
+### run MK-HSIC-Lasso 
 
 ```py
->>> hsic_lasso.regression(5,covars=X)
-
->>> hsic_lasso.classification(10,covars=X)
+MKHSICLasso = MKHSICLasso()
+MKHSICLasso.input(x,y)
 ```
 
-
-## Example
-
-```py
->>> from pyHSICLasso import HSICLasso
->>> hsic_lasso = HSICLasso()
-
->>> hsic_lasso.input("data.mat")
-
->>> hsic_lasso.input("data.csv")
-
->>> hsic_lasso.input("data.tsv")
-
->>> hsic_lasso.input(np.array([[1, 1, 1], [2, 2, 2]]), np.array([0, 1]))
+### regression 
+``` py
+MKHSICLasso.regression(desire_number,B=B, M=M, max_neighbors=max_neighbors)
 ```
 
-You can specify the number of subset of feature selections with arguments `regression` and` classification`.
+### classification
 
 ```py
->>> hsic_lasso.regression(5)
-
->>> hsic_lasso.classification(10)
+MKHSICLasso.classification(desire_number,B=B, M=M, max_neighbors=max_neighbors)
 ```
 
-About output method, it is possible to select plots on the graph, details of the analysis result, output of the feature index. Note, to run the dump() function, it needs at least 5 features in the dataset.
+Users can adjust the following parameters: 
+--desire_number: the number you want to extract
+--B: block size
+--M: number of repeats for bagging
+--max_neighbors: the maximum number of neighbors to check redundency.
+
+
+# save selected results, get selected index 
 
 ```py
->>> hsic_lasso.plot()
-# plot the graph
-
->>> hsic_lasso.dump()
-============================================== HSICLasso : Result ==================================================
-| Order | Feature      | Score | Top-5 Related Feature (Relatedness Score)                                          |
-| 1     | 1100         | 1.000 | 100          (0.979), 385          (0.104), 1762         (0.098), 762          (0.098), 1385         (0.097)|
-| 2     | 100          | 0.537 | 1100         (0.979), 385          (0.100), 1762         (0.095), 762          (0.094), 1385         (0.092)|
-| 3     | 200          | 0.336 | 1200         (0.979), 264          (0.094), 1482         (0.094), 1264         (0.093), 482          (0.091)|
-| 4     | 1300         | 0.140 | 300          (0.984), 1041         (0.107), 1450         (0.104), 1869         (0.102), 41           (0.101)|
-| 5     | 300          | 0.033 | 1300         (0.984), 1041         (0.110), 41           (0.106), 1450         (0.100), 1869         (0.099)|
->>> hsic_lasso.get_index()
-[1099, 99, 199, 1299, 299]
-
->>> hsic_lasso.get_index_score()
-array([0.09723658, 0.05218047, 0.03264885, 0.01360242, 0.00319763])
-
->>> hsic_lasso.get_features()
-['1100', '100', '200', '1300', '300']
-
->>> hsic_lasso.get_index_neighbors(feat_index=0,num_neighbors=5)
-[99, 384, 1761, 761, 1384]
-
->>> hsic_lasso.get_features_neighbors(feat_index=0,num_neighbors=5)
-['100', '385', '1762', '762', '1385']
-
->>> hsic_lasso.get_index_neighbors_score(feat_index=0,num_neighbors=5)
-array([0.9789888 , 0.10350618, 0.09757666, 0.09751763, 0.09678892])
-
->>> hsic_lasso.save_param() #Save selected features and its neighbors 
-
+MKHSICLasso.save_param(path)
+hsic_lasso.get_index() 
 ```
 
 
