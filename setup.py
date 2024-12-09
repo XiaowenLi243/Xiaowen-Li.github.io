@@ -2,9 +2,7 @@
 # coding: utf-8
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import os
-
 from setuptools import setup, find_packages
 
 
@@ -35,11 +33,6 @@ def _packages():
 setup(
     name="pyMKHSICLasso",
     version="1.4.2",
-    author="Makoto Yamada",
-    author_email="makoto.yamada@riken.jp",
-    url="http://www.makotoyamada-ml.com/hsiclasso.html",
-    description="Supervised, nonlinear feature selection method for high-dimensional datasets.",
-    long_description=long_description,
     download_url="https://github.com/XiaowenLi243/pyHSICLasso.git",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -47,17 +40,13 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering",
     ],
-    platforms=["python2.7", "python3.4", "python3.5", "python3.6"],
+    platforms=[ "python3.8", "python3.10", "python3.11"],
     license="MIT",
-    keywords="HSIC Lasso HSICLasso feature-selection feature-extraction machine-learning nonlinear data-science",
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
     install_requires=_install_requires(),
