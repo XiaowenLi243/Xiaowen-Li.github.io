@@ -1,4 +1,4 @@
-# MKHSICLasso
+# MK-HSIC-LASSO
 
 We developed the Multi-Kernel Hilbert-Schmidt Independence Criterion Lasso (MK-HSIC-Lasso)
 for feature selection. Our approach integrates multiple kernel learning into the HSIC-Lasso framework,
@@ -21,7 +21,7 @@ Then open a terminal and clone this repository:
 git clone https://github.com/XiaowenLi243/MKHSICLasso.git
 ```
 
-create a virtual environment and install all dependencies:
+create a virtual environment MKHSIC and activate it:
 
 ```
 cd MKHSICLasso
@@ -32,6 +32,7 @@ python -m venv MKHSIC
 source ./MKHSIC/bin/activate
 
 ```
+After activating your virtual environment, install all dependencies:
 
 ```sh
 $ pip install -r requirements.txt
@@ -41,64 +42,32 @@ $ python setup.py install
 or  
 
 ```sh
-$ pip install pyHSICLasso
+$ pip install MKHSICLasso
 ```
 
 
+## Getting Started
 
-## Usage
-First, pyHSICLasso provides the single entry point as class `HSICLasso()`
+In this paper, we considered the most commonly used kernels, including the Gaussian (i.e., $K(x,x^{\prime}) = \exp\left(-\frac{\|x - x^{\prime}\|^2}{2\sigma^2}\right)$ with the bandwidth $\sigma^2 = 1$), linear (i.e., $K(x,x^{\prime}) = x^\top x^{\prime}$) and polynomial kernels with 2 degrees of freedom ($K(x,x^{\prime}) = (x^\top x^{\prime})^d$ with $d=2$) for inputs. We only used one kernel for the outcome, where Gaussian kernel is used if the outcome is continuous and the delta kernel \citep{song2012feature, yamada2014high} defined in equation (\ref{eq: Gaussia_y}) is used when the outcome is categorical. 
 
-This class has the following methods.
 
-- input
-- regression
-- classification
-- dump
-- plot_path
-- plot_dendrogram 
-- plot_heatmap
-- get_features
-- get_features_neighbors
-- get_index
-- get_index_score
-- get_index_neighbors
-- get_index_neighbors_score
-- save_param
+# run HSIC-lasso
+hsic_lasso = MKHSICLasso()
+hsic_lasso.input(x_train_norm,y_train_norm)
 
-The input format corresponds to the following formats.
+# regression continuous y 
+hsic_lasso.regression(desire_number,B=B, M=M, max_neighbors=max_neighbors)
+# save selected results.
+hsic_lasso.save_param('/nesi/project/uoa03056/MultiOmics/ADNI/Gene_expression/MKparams_GM/gene_ex_GM_%d.csv'%ind)
+#active_ind = hsic_lasso.get_index() 
 
-- MATLAB file (.mat)
-- .csv
-- .tsv
-- numpy's ndarray
-
-## Input file
-When using .mat, .csv, .tsv, we support pandas dataframe. 
-The rows of the dataframe are sample number. The output variable should have `class` tag. 
-If you wish to use your own tag, you need to specify the output variables by list (`output_list=['tag']`) 
-The remaining columns are values of each features. The following is a sample data (csv format). 
-
-```
-class,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10
--1,2,0,0,0,-2,0,-2,0,2,0
-1,2,2,0,0,-2,0,0,0,2,0
-...
-
-```
-
-For multi-variate output cases, you can specify the output by using the list (`output_list`). See [Sample code](https://github.com/riken-aip/pyHSICLasso/blob/master/example/sample_multi_variate_output.py) for details.
 
 ## Save results to a csv file
 If you want to save the feature selection results in csv file, please call the following function:
 
 ```
->>> hsic_lasso.save_param()
+>>> MKhsic_lasso.save_param()
 ```
-
-## To get rid of specific covariates effect
-In biology applications, we may want to get rid of the effect of some covariates such as gender and/or age. 
-In such cases, we can pre-specify the covariates `X` in `classification` or `regression` functions as
 
 ```py
 >>> hsic_lasso.regression(5,covars=X)
@@ -106,11 +75,6 @@ In such cases, we can pre-specify the covariates `X` in `classification` or `reg
 >>> hsic_lasso.classification(10,covars=X)
 ```
 
-Please check the `example/sample_covars.py` for details. 
-
-## To handle large number of samples 
-HSIC Lasso scales well with respect to the number of features `d`. However, the vanilla HSIC Lasso requires `O(dn^2)` memory space and may run out the memory if the number of samples `n` is more than 1000. In such case, we can use the block HSIC Lasso which requires only `O(dnBM)` space, where `B << n` is the block parameter and `M` is the permutation parameter to stabilize the final result. This can be done by specifying `B` and `M` parameters in the regression or classification function. 
-Currently, the default parameters are `B=20` and `M=3`, respectively.  If you wish to use the vanilla HSIC Lasso, please use `B=0` and `M=1`.
 
 ## Example
 
@@ -171,58 +135,4 @@ array([0.9789888 , 0.10350618, 0.09757666, 0.09751763, 0.09678892])
 
 ```
 
-## Citation
-If you use this softwawre for your research, please cite the following two papers: Original HSIC Lasso and its block counterparts.
-```
-@article{yamada2014high,
-  title={High-dimensional feature selection by feature-wise kernelized lasso},
-  author={Yamada, Makoto and Jitkrittum, Wittawat and Sigal, Leonid and Xing, Eric P and Sugiyama, Masashi},
-  journal={Neural computation},
-  volume={26},
-  number={1},
-  pages={185--207},
-  year={2014},
-  publisher={MIT Press}
-}
-
-@article{climente2019block,
-  title={Block HSIC Lasso: model-free biomarker detection for ultra-high dimensional data},
-  author={Climente-Gonz{\'a}lez, H{\'e}ctor and Azencott, Chlo{\'e}-Agathe and Kaski, Samuel and Yamada, Makoto},
-  journal={Bioinformatics},
-  volume={35},
-  number={14},
-  pages={i427--i435},
-  year={2019},
-  publisher={Oxford University Press}
-}
-```
-
-## References
-
-### Algorithms
-- Climente-González, H., Azencott, C-A., Kaski, S., & Yamada, M., [Block HSIC Lasso: model-free biomarker detection for ultra-high dimensional data.](https://doi.org/10.1093/bioinformatics/btz333) Bioinformatics, Volume 35, Issue 14, July 2019, Pages i427–i435 (Also presented at ISMB 2019). (**Google scholar citations: 20** as of 2021/12/8)
--  Yamada, M., Tang, J., Lugo-Martinez, J., Hodzic, E., Shrestha, R., Saha, A., Ouyang, H., Yin, D., Mamitsuka, H., Sahinalp, C., Radivojac, P., Menczer, F., & Chang, Y. [Ultra High-Dimensional Nonlinear Feature Selection for Big Biological Data.
-](https://ieeexplore.ieee.org/document/8248802/) IEEE Transactions on Knowledge and Data Engineering (TKDE), pp.1352-1365, 2018. (**Google scholar citations: 49** as of 2021/12/8)
-- Yamada, M., Jitkrittum, W., Sigal, L., Xing, E. P. & Sugiyama, M. [High-Dimensional Feature Selection by Feature-Wise Kernelized Lasso.](http://www.ms.k.u-tokyo.ac.jp/2014/HSICLasso.pdf) Neural Computation, vol.26, no.1, pp.185-207, 2014. (**Google scholar citations: 211** as of 2021/12/8)
-
-### Theory
-- Poignard, B., Yamada, M. [Sparse Hilbert-Schmidt Independence Regression.](http://proceedings.mlr.press/v108/poignard20a/poignard20a.pdf) AISTATS 2020. 
-
-### HSIC Lasso based algorithms
-- Freidling, T., Poignard, B., Climente-González, H., Yamada, M., [Post-selection inference with HSIC-Lasso.](https://arxiv.org/pdf/2010.15659.pdf) ICML 2021. [\[code\]](https://github.com/tobias-freidling/hsic-lasso-psi)
-- Huang, Q., Yamada, M., Tian, Y., Singh, D., Chang, Y., [GraphLIME: Local Interpretable Model Explanations for Graph Neural Networks](https://arxiv.org/pdf/2001.06216.pdf). arXiv 2020. [\[code\]](https://github.com/WilliamCCHuang/GraphLIME) (**Google scholar citations: 63** as of 2021/12/8)
-
-### Applications of HSIC Lasso
-- Takahashi, Y., Ueki, M., Yamada, M., Tamiya, G., Motoike, I., Saigusa, D., Sakurai, M., Nagami, F., Ogishima, S., Koshiba, S., Kinoshita, K., Yamamoto, M., Tomita, H. Improved metabolomic data-based prediction of depressive symptoms using nonlinear machine learning with feature selection. Translational Psychiatry volume 10, Article number: 157 (2020). 
-
-## Contributors
-### Developers
-Name : Makoto Yamada (Kyoto University/RIKEN AIP), Héctor Climente-González (RIKEN AIP)
-
-E-mail : makoto.yamada@riken.jp
-
-### Distributor
-Name : Hirotaka Suetake (RIKEN AIP)
-
-E-mail : hirotaka.suetake@riken.jp
 
