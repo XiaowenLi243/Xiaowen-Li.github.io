@@ -38,15 +38,8 @@ After activating your virtual environment, install all dependencies:
 
 ```sh
 $ pip install -r requirements.txt
-$ python setup.py install
+$ pip install pyMKHSICLasso
 ```
-
-or  
-
-```sh
-$ pip install MKHSICLasso
-```
-
 
 ## Getting Started
 
