@@ -1,13 +1,10 @@
 # coding: utf-8
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 import warnings
 from builtins import int, open, range, str
-
 from future import standard_library
-
 import numpy as np
 import scipy.spatial.distance as distance
 from scipy.cluster.hierarchy import linkage
@@ -21,7 +18,11 @@ from .plot_figure import plot_dendrogram, plot_path
 standard_library.install_aliases()
 
 
-class MKHSICLasso(object):
+class MKHSICLasso:
+    """
+    A class to perform Multivariate Kernel HSIC Lasso for feature selection and hierarchical clustering.
+    """
+
     def __init__(self):
         self.input_file = None
         self.X_in = None
@@ -41,124 +42,106 @@ class MKHSICLasso(object):
         self.hclust_featnameindex = None
         self.max_neighbors = 10
 
-    def input(self, *args, **_3to2kwargs):
-        if 'output_list' in _3to2kwargs: output_list = _3to2kwargs['output_list']; del _3to2kwargs['output_list']
-        else: output_list = ['class']
-
+    def input(self, *args, output_list=['class'], featname=None):
+      
         self._check_args(args)
+
         if isinstance(args[0], string_types):
             self._input_data_file(args[0], output_list)
         elif isinstance(args[0], np.ndarray):
-            if 'featname' in _3to2kwargs:
-                featname = _3to2kwargs['featname']; del _3to2kwargs['featname']
-            else: featname = ['%d' % x for x in range(1, args[0].shape[1]*3 + 1)]
-
-            if len(args) == 2:
-                self._input_data_ndarray(args[0], args[1], featname)
-            if len(args) == 3:
-                self._input_data_ndarray(args[0], args[1], args[2])
+            self._input_data_ndarray(*args, featname)
         else:
-            pass
+            raise ValueError("Unsupported input type.")
+
         if self.X_in is None or self.Y_in is None:
-            raise ValueError("Check your input data")
+            raise ValueError("Invalid input data.")
+        
         self._check_shape()
         return True
 
-    def regression(self, num_feat=5, B=20, M=3, discrete_x=False, max_neighbors=10, n_jobs=-1, covars = np.array([]),covars_kernel="Gaussian"):
-        self._run_MKhsic_lasso(num_feat=num_feat,
-                             y_kernel="Gaussian",
-                             B=B, M=M,
-                             discrete_x=discrete_x,
-                             max_neighbors=max_neighbors,
-                             n_jobs=n_jobs,
-                             covars=covars,
-                             covars_kernel=covars_kernel)
-
+    def regression(self, num_feat=5, B=20, M=3, discrete_x=False, max_neighbors=10, n_jobs=-1, covars=np.array([]), covars_kernel="Gaussian"):
+        """
+        Runs regression using MKHSIC Lasso.
+        """
+        self._run_MKhsic_lasso(
+            num_feat=num_feat, y_kernel="Gaussian", B=B, M=M,
+            discrete_x=discrete_x, max_neighbors=max_neighbors,
+            n_jobs=n_jobs, covars=covars, covars_kernel=covars_kernel
+        )
         return True
 
-    def classification(self, num_feat=5, B=20, M=3, discrete_x=False, max_neighbors=10, n_jobs=-1, covars = np.array([]),covars_kernel="Gaussian"):
-        self._run_MKhsic_lasso(num_feat=num_feat,
-                             y_kernel="Delta",
-                             B=B, M=M,
-                             discrete_x=discrete_x,
-                             max_neighbors=max_neighbors,
-                             n_jobs=n_jobs, 
-                             covars=covars,
-                             covars_kernel=covars_kernel)
-
+    def classification(self, num_feat=5, B=20, M=3, discrete_x=False, max_neighbors=10, n_jobs=-1, covars=np.array([]), covars_kernel="Gaussian"):
+        """
+        Runs classification using MKHSIC Lasso.
+        """
+        self._run_MKhsic_lasso(
+            num_feat=num_feat, y_kernel="Delta", B=B, M=M,
+            discrete_x=discrete_x, max_neighbors=max_neighbors,
+            n_jobs=n_jobs, covars=covars, covars_kernel=covars_kernel
+        )
         return True
 
     def _run_MKhsic_lasso(self, y_kernel, num_feat, B, M, discrete_x, max_neighbors, n_jobs, covars, covars_kernel):
-
+        """
+        Internal method to run the MKHSIC Lasso algorithm.
+        """
         if self.X_in is None or self.Y_in is None:
-            raise UnboundLocalError("Input your data")
+            raise UnboundLocalError("Input data is missing.")
+
         self.max_neighbors = max_neighbors
         n = self.X_in.shape[1]
-        B = B if B else n
-        numblocks = n / B
+        B = B or n
+        numblocks = n // B
         discarded = n % B
 
-        print('Block HSIC Lasso B = {}.'.format(B))
-
+        print(f'Block HSIC Lasso B = {B}.')
         if discarded:
-            msg = "B {} must be an exact divisor of the number of samples {}. Number \
-of blocks {} will be approximated to {}.".format(B, n, numblocks, int(numblocks))
-            warnings.warn(msg, RuntimeWarning)
+            warnings.warn(
+                f"B ({B}) must divide the number of samples ({n}). Adjusted blocks to {numblocks}.",
+                RuntimeWarning
+            )
             numblocks = int(numblocks)
 
-        # Number of permutations of the block HSIC
-        M = 1 + bool(numblocks - 1) * (M - 1)
-        print('M set to {}.'.format(M))
-        print('{} kernel for the outcomes{}.'.format(y_kernel, ' and Gaussian kernel for the covariates' if covars.size else ''))
+        M = 1 + (numblocks > 1) * (M - 1)
+        print(f'M set to {M}.')
+        print(f'{y_kernel} kernel for outcomes {"and Gaussian kernel for covariates" if covars.size else ""}.')
 
-        X,Xty,Ky = MKhsic_lasso(self.X_in, self.Y_in, y_kernel, n_jobs=n_jobs, discarded=discarded, B=B, M=M)
-
-        # np.concatenate(self.X, axis = 0) * np.sqrt(1/(numblocks * M))
+        X, Xty, Ky = MKhsic_lasso(self.X_in, self.Y_in, y_kernel, n_jobs=n_jobs, discarded=discarded, B=B, M=M)
         self.X = X * np.sqrt(1 / (numblocks * M))
-        self.Xty = Xty * 1 / (numblocks * M)
+        self.Xty = Xty * (1 / (numblocks * M))
 
+        # Handle covariates
         if covars.size:
             if self.X_in.shape[1] != covars.shape[0]:
-                raise UnboundLocalError("The number of rows in the covars matrix should be " + str(self.X_in.shape[1]))
+                raise ValueError("Mismatch between samples in covariates and input data.")
+            Kc = compute_kernel(covars.T, covars_kernel, B, M, discarded)
+            Kc = Kc.reshape(n * B * M, 1) * np.sqrt(1 / (numblocks * M))
+            Ky *= np.sqrt(1 / (numblocks * M))
+            betas = np.dot(Ky.T, Kc) / np.trace(np.dot(Kc.T, Kc))
+            self.Xty -= betas * np.dot(self.X.T, Kc)
 
-            if covars_kernel == "Gaussian":
-                Kc = compute_kernel(covars.transpose(), 'Gaussian', B, M, discarded)
-            else:
-                Kc = compute_kernel(covars.transpose(), 'Delta', B, M, discarded)
-            Kc = np.reshape(Kc,(n * B * M,1))
-
-            Ky = Ky * np.sqrt(1 / (numblocks * M))
-            Kc = Kc * np.sqrt(1 / (numblocks * M))
-
-            betas = np.dot(Ky.transpose(),Kc) / np.trace(np.dot(Kc.T, Kc))
-            #print(betas)
-            self.Xty = self.Xty - betas*np.dot(self.X.transpose(),Kc)
-
-        self.A_all, self.path, self.beta, self.A, self.lam, self.A_neighbors, self.A_neighbors_score = nlars(self.X, self.Xty, num_feat, self.max_neighbors)
-
+        # Run NLARS
+        self.A_all, self.path, self.beta, self.A, self.lam, self.A_neighbors, self.A_neighbors_score = nlars(
+            self.X, self.Xty, num_feat, self.max_neighbors
+        )
         return True
 
-    # For kernel Hierarchical Clustering
     def linkage(self, method="ward"):
+        """
+        Performs hierarchical clustering on selected features.
+        """
         if self.A is None:
-            raise UnboundLocalError("Run regression/classification first")
-        # selected feature name
-        featname_index = []
-        featname_selected = []
-        for i in range(len(self.A) - 1):
-            for index in self.A_neighbors[i]:
-                if index not in featname_index:
-                    featname_index.append(index)
-                    featname_selected.append(self.featname[index])
+            raise UnboundLocalError("Run regression/classification first.")
+        
+        featname_index, featname_selected = self._get_selected_features()
         self.hclust_featname = featname_selected
         self.hclust_featnameindex = featname_index
-        sim = np.dot(self.X[:, featname_index].transpose(),
-                     self.X[:, featname_index])
+
+        sim = np.dot(self.X[:, featname_index].T, self.X[:, featname_index])
         dist = 1 - sim
         dist = np.maximum(0, dist - np.diag(np.diag(dist)))
-        dist_sym = (dist + dist.transpose()) / 2.0
+        dist_sym = (dist + dist.T) / 2.0
         self.linkage_dist = linkage(distance.squareform(dist_sym), method)
-
         return True
 
     def dump(self):
@@ -177,19 +160,6 @@ of blocks {} will be approximated to {}.".format(B, n, numblocks, int(numblocks)
         results[0] = deco + results[0] + deco
 
         print("\n".join(results))
-
-        #print("===== HSICLasso : Path ======")
-        # for i in range(len(self.A)):
-        #    print(self.path[self.A[i], 1:])
-        # return True
-    #
-    #def plot_heatmap(self, filepath = 'heatmap.png'):
-    #    if self.linkage_dist is None or self.hclust_featname is None or self.hclust_featnameindex is None:
-    #        raise UnboundLocalError("Input your data")
-    #    plot_heatmap(self.X_in[self.hclust_featnameindex, :],
-    #                 self.linkage_dist, self.hclust_featname,
-    #                 filepath)
-     #   return True
 
     def plot_dendrogram(self, filepath = 'dendrogram.png'):
         if self.linkage_dist is None or self.hclust_featname is None:
