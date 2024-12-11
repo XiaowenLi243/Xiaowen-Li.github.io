@@ -37,13 +37,15 @@ After activating your virtual environment, install all dependencies:
 
 ```sh
 $ pip install -r requirements.txt
+
+
+explanation details see:[https://github.com/riken-aip/pyHSICLasso]
+
+
 ```
 
 ## Customise kernel functions
 
 see 'kernel_tool` file, add the kernel you want to apply.
-
-details see:[https://github.com/riken-aip/pyHSICLasso]
-
 
 
