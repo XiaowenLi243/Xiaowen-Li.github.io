@@ -38,44 +38,15 @@ After activating your virtual environment, install all dependencies:
 
 ```sh
 $ pip install -r requirements.txt
-$ pip install pyMKHSICLasso
 ```
 
 ## Getting Started
 
-### run MK-HSIC-Lasso 
-
-```py
-MKHSICLasso = MKHSICLasso()
-MKHSICLasso.input(x,y)
-```
-
-### regression 
-``` py
-MKHSICLasso.regression(desire_number,B=B, M=M, max_neighbors=max_neighbors)
-```
-
-### classification
-
-```py
-MKHSICLasso.classification(desire_number,B=B, M=M, max_neighbors=max_neighbors)
-```
-
-Users can adjust the following parameters: 
---desire_number: the number you want to extract
---B: block size
---M: number of repeats for bagging
---max_neighbors: the maximum number of neighbors to check redundency.
-
-
-# save selected results, get selected index 
-
-```py
-MKHSICLasso.save_param(path)
-MKHSICLasso.get_index() 
-```
-
 ## Customise kernel functions
 
 see 'kernel_tool` file, add the kernel you want to apply.
+
+details see:[https://github.com/riken-aip/pyHSICLasso]
+
+
 
