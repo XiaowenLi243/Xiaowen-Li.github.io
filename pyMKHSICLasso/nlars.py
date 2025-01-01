@@ -84,7 +84,7 @@ def nlars(X, X_ty, num_feat, max_neighbors):
         gamma3 = c[A[0]] / XtXw[A[0]]
         gamma = np.concatenate((np.concatenate((gamma1, gamma2)), [gamma3]))
 
-        gamma[gamma <= 1e-9] = np.inf
+        gamma[gamma <= 1e-16] = np.inf
         t = gamma.argmin()
         mu = min(gamma)
 
