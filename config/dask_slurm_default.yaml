@@ -1,0 +1,26 @@
+hsic_optimization:
+    module: hsic_optimization.cluster
+    class: PatchedSLURMCluster
+
+distributed:
+    worker:
+        memory:
+            target: False  # avoid spilling to disk
+            spill: False  # avoid spilling to disk
+            pause: 0.80  # pause execution at 80% memory use
+            terminate: 0.95  # restart the worker at 95% use
+    scheduler:
+        allowed-failures: 50  # allow some resilience when jobs are restarted
+    adaptive:
+        target-duration: 30s  # ensure workers aren't immediately killed
+
+jobqueue:
+    slurm:
+        cores: 4
+        processes: 4
+        memory: 8GiB
+        walltime: 0-02:10
+        log_directory: ./dask/logs
+        local_directory: ./dask
+        interface: ib0
+        extra: ["--lifetime", "120m", "--lifetime-stagger", "10m"]
