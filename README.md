@@ -14,7 +14,9 @@ In this paper, we considered the most commonly used kernels, including the Gauss
 
 ## Getting Started
 
-We modify codes based on :[https://github.com/riken-aip/pyHSICLasso].
+There are two versions to implement MK-HSIC-Lasso, in the main branck, we modify codes based on HSIC-Lasso, optimising problems based on LARS :[https://github.com/riken-aip/pyHSICLasso].
+
+We also developped another version MK-HSIC-Lasso using coordinate descent. please see MK
 
 First make sure you have [Git](https://git-scm.com/downloads) installed on your computer.
 
