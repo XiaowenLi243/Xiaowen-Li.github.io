@@ -1,6 +1,6 @@
-# HSIC Lasso optimization
+# MK-HSIC-Lasso optimization
 
-This project aims at optimizing the memory consumption of HSIC Lasso to scale it to very large datasets.
+This project aims at optimizing the memory consumption of MK-HSIC Lasso to scale it to very large datasets.
 
 
 ## Installation
