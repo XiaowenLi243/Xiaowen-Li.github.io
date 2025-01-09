@@ -14,6 +14,8 @@ In this paper, we considered the most commonly used kernels, including the Gauss
 
 ## Getting Started
 
+We modify codes based on :[https://github.com/riken-aip/pyHSICLasso].
+
 First make sure you have [Git](https://git-scm.com/downloads) installed on your computer.
 
 Then open a terminal and clone this repository:
