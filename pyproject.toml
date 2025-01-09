@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hsic_optimization"
+description = "Explore optimization of HSIC Lasso for large datasets"
+authors = [
+    { name = "Maxime RIO", email = "maxime.rio@nesi.org.nz" },
+]
+dependencies = [
+    "pyHSICLasso",
+    "memory_profiler",
+    "joblib",
+    "numpy",
+    "scipy",
+    "pandas",
+    "seaborn",
+    "defopt",
+    "tqdm",
+    "numba",
+    "scikit-learn",
+    "dask[complete]",
+    "dask-jobqueue",
+    "h5py",
+    "pyyaml",
+    "graphviz",
+    "tqdm"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pip-tools",
+    "ipykernel",
+    "ruff",
+    "pdbpp",
+    "memray",
+    "pyinstrument",
+    "line_profiler",
+    "pytest"
+]
+doc = [
+    "sphinx",
+    "myst-parser",
+    "myst-nb",
+    "sphinx-autoapi",
+    "furo",
+    "sphinx-autobuild"
+]
+
+[project.scripts]
+benchmark = "hsic_optimization.benchmark:main"
+hsic_tools = "hsic_optimization.hsic_tools:main"
+
+[tool.setuptools_scm]
+# needed even if empty to enable setuptools_scm
+
+[tool.ruff]
+lint.select = ["E", "F"]
+lint.ignore = ["E203"]
+extend-exclude = [".ipynb_checkpoints"]
+extend-include = ["*.ipynb"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--ignore tests/test_scheduler.py"
