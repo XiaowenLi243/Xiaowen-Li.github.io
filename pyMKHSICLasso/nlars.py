@@ -138,9 +138,9 @@ def nlars(X, X_ty, num_feat, max_neighbors):
     return A_all, path_final, beta, A_sorted, lam_final, A_neighbors, A_neighbors_score
 
 
-def nlars_SSR(X, X_ty, num_feat, max_neighbors):
+def nlars_SSR_KKT(X, X_ty, num_feat, max_neighbors):
     """
-    Nonnegative LARS solver for feature selection with Sequential Strong Rule (SSR).
+    Nonnegative LARS solver for feature selection with Sequential Strong Rule (SSR) and KKT condition check.
 
     Parameters:
     - X: (n, d) matrix, feature matrix.
@@ -213,6 +213,11 @@ def nlars_SSR(X, X_ty, num_feat, max_neighbors):
         XtXbeta = np.dot(X.T, np.dot(X, beta))
         c = X_ty - XtXbeta
 
+        # KKT condition check
+        for idx in I:
+            if c[idx] > max(c[A]):
+                raise ValueError(f"KKT condition violated: Inactive feature {idx} has larger correlation than active set.")
+
         # Store active set and regularization path
         A_all.append(A[:])
         path_all[:, len(A)] = beta.flatten()
@@ -234,4 +239,5 @@ def nlars_SSR(X, X_ty, num_feat, max_neighbors):
     lam_final = lam[:, :len(A) + 1]
 
     return A_all, path_final, beta, A_sorted, lam_final, A_neighbors, A_neighbors_score
+
 
