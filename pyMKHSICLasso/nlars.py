@@ -214,9 +214,15 @@ def nlars_SSR_KKT(X, X_ty, num_feat, max_neighbors):
         c = X_ty - XtXbeta
 
         # KKT condition check
+        violated_features = []
         for idx in I:
             if c[idx] > max(c[A]):
-                raise ValueError(f"KKT condition violated: Inactive feature {idx} has larger correlation than active set.")
+                violated_features.append(idx)
+
+        # If any features fail KKT, reconsider them
+        for idx in violated_features:
+            A.append(idx)
+            I.remove(idx)
 
         # Store active set and regularization path
         A_all.append(A[:])
@@ -239,5 +245,4 @@ def nlars_SSR_KKT(X, X_ty, num_feat, max_neighbors):
     lam_final = lam[:, :len(A) + 1]
 
     return A_all, path_final, beta, A_sorted, lam_final, A_neighbors, A_neighbors_score
-
 
