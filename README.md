@@ -1,6 +1,6 @@
-# MK-HSIC-Lasso optimization
+# HSIC Lasso optimization
 
-This project aims at optimizing the memory consumption of MK-HSIC Lasso to scale it to very large datasets.
+This project aims at optimizing the memory consumption of HSIC Lasso to scale it to very large datasets.
 
 
 ## Installation
@@ -18,8 +18,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 Then open a terminal and clone this repository:
 
 ```
-git clone https://github.com/XiaowenLi243/MKHSICLasso.git
-
+git clone https://github.com/yaluwen/hsic_optimization.git
 ```
 
 Use `make` to create a conda environment and install all dependencies:
