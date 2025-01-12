@@ -44,7 +44,9 @@ After activating your virtual environment, install all dependencies:
 $ pip install -r requirements.txt
 
 
-explanation details see:[https://github.com/riken-aip/pyHSICLasso]
+explanation details of the LARS version, please see:[https://github.com/riken-aip/pyHSICLasso]
+
+the version of coordinate descent, please see MKHSICLasso-CD branch
 
 
 ```
