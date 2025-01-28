@@ -18,7 +18,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 Then open a terminal and clone this repository:
 
 ```
-git clone https://github.com/yaluwen/hsic_optimization.git
+git clone [https://github.com/yaluwen/hsic_optimization.git](https://github.com/XiaowenLi243/MKHSICLasso.git)
 ```
 
 Use `make` to create a conda environment and install all dependencies:
