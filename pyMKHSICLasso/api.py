@@ -94,7 +94,7 @@ class MKHSICLasso:
         numblocks = n // B
         discarded = n % B
 
-        print(f'Block HSIC Lasso B = {B}.')
+        print(f'Block MK-HSIC Lasso B = {B}.')
         if discarded:
             warnings.warn(
                 f"B ({B}) must divide the number of samples ({n}). Adjusted blocks to {numblocks}.",
@@ -296,7 +296,6 @@ class MKHSICLasso:
         # Save the array to an npy file
         np.save(filename, my_array)
     
-    # ========================================
 
     def _check_args(self, args):
         if len(args) == 0 or len(args) >= 4:
